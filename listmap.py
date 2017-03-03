@@ -1,6 +1,9 @@
-import sys
+from argparse import RawTextHelpFormatter
+import sys, time, os
 import re
 import argparse
+
+timestr = time.strftime("%Y%m%d-%H%M")
 
 
 class colors:
@@ -25,27 +28,58 @@ banner = colors.red + r"""
 + '\n listmap.py v0.01' \
 + '\n Created by: Shane Young/@x90skysn3k' + '\n' + colors.normal + '\n'
 
-if len(sys.argv) < 2:
-    print banner
-    sys.exit()
-
-port = sys.argv[2]
-
-
-#def openfile():
-with open(sys.argv[1], 'r') as nmap_file:
-    for line in nmap_file:
-        if ' '+port+'/open' in line:
-            ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
-            print '\n '.join(ip)
-
-#def helpbanner():
+#if len(sys.argv) < 2:
 #    print banner
-#    print " Usage: python listmap.py <OPTIONS> \n"
-#    print "\t -f <file>\t\tGnmap file to parse. "
-#    print "\t -t <top_ports>\t\tOutput IP's with interesting ports to file. "
-#    print "\t -p <port>\t\tDefine single port to search for. "
-#    print "\t -o <out_file>\t\tSpecify prefix of outfile. "
+#    sys.exit()
+
+#port = sys.argv[2]
+
+
+def openfile():
+    with open(args.file, 'r') as nmap_file:
+        iplist = []
+        for line in nmap_file:
+            if ' '+args.port+'/open' in line:
+                ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
+                iplist += ip
+
+        with open(args.outfile, 'a') as f:
+            print 'iplist:'
+            print iplist
+            f.write('\n'.join(iplist))
+
+def parse_args():
+    
+    parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter, description=\
+
+    banner + 
+    "Usage: python listmap.py <OPTIONS> \n")
+
+    menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
+    
+    menu_group.add_argument('-f', '--file', help="Gnmap file to parse")
+    
+    menu_group.add_argument('-t', '--top-ports', help="Parse out top interesting ports")
+
+    menu_group.add_argument('-p', '--port', help="Define single port to parse out")
+
+    menu_group.add_argument('-o', '--outfile', help="Specify output file prefix")
+
+    args = parser.parse_args()
+
+    if not args.file:
+        args.file = raw_input('Enter file gnmap file to parse:')
+        print('ENTERED: {0}\n'.format(args.file))
+    if not args.port:
+        args.port = raw_input('Enter port to parse out:')
+        print('ENTERED: {0}\n'.format(args.port))
+    if not args.outfile:
+        args.outfile = raw_input('Enter prefix for file output:')
+        print('ENTERED: {0}\n'.format(args.outfile))
+    output = 'listmap-data/' + args.outfile + ' ' + timestr + '.txt'
+    return args,output
+
+
 
 #parser = argparse.ArgumentParser()
 
@@ -59,8 +93,14 @@ with open(sys.argv[1], 'r') as nmap_file:
 #parsed_args.action(parsed_args)
 
 
-#if __name__ == "__main__":
-#    main()
+if __name__ == "__main__":
+    print(banner)
+    args,output = parse_args()
+    openfile()
+    
+    if not os.path.exists("listmap-output/"):
+        os.mkdir("listmap-output/")
+
 
 
 
