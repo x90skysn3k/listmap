@@ -14,6 +14,7 @@ class colors:
     green = "\033[1;32m"
     lightblue = "\033[0;34m"
 
+
 banner = colors.red + r"""
      _             _                            
     (_ )  _       ( )_                          
@@ -28,25 +29,22 @@ banner = colors.red + r"""
 + '\n listmap.py v0.01' \
 + '\n Created by: Shane Young/@x90skysn3k' + '\n' + colors.normal + '\n'
 
-#if len(sys.argv) < 2:
-#    print banner
-#    sys.exit()
-
-#port = sys.argv[2]
-
 
 def openfile():
-    with open(args.file, 'r') as nmap_file:
-        iplist = []
-        for line in nmap_file:
-            if ' '+args.port+'/open' in line:
-                ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
-                iplist += ip
+    for port in port_list:
+        with open(args.file, 'r') as nmap_file:
+            iplist = []
+            for line in nmap_file:
+                if ' '+port+'/open' in line:
+                    ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
+                    iplist += ip
+             
+            output = 'listmap-data/' + args.outfile + '-' + port + '_' + timestr + '.txt'
+            with open(output, 'w+') as f:
+                f.write('\n'.join(iplist))
+                f.write('\n')
+                print "Written list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
 
-        with open(args.outfile, 'a') as f:
-            print 'iplist:'
-            print iplist
-            f.write('\n'.join(iplist))
 
 def parse_args():
     
@@ -67,6 +65,8 @@ def parse_args():
 
     args = parser.parse_args()
 
+    output = None
+
     if not args.file:
         args.file = raw_input('Enter file gnmap file to parse:')
         print('ENTERED: {0}\n'.format(args.file))
@@ -76,31 +76,17 @@ def parse_args():
     if not args.outfile:
         args.outfile = raw_input('Enter prefix for file output:')
         print('ENTERED: {0}\n'.format(args.outfile))
-    output = 'listmap-data/' + args.outfile + ' ' + timestr + '.txt'
+    #output = 'listmap-data/' + args.outfile + ' ' + args.port + '_' + timestr + '.txt'
     return args,output
-
-
-
-#parser = argparse.ArgumentParser()
-
-#parser.add_argument('-f', dest='action', action='store_const', const='helpbanner', help='specify gnmap file to parse')
-
-
-
-#parsed_args = parser.parse_args()
-#if parsed_args.action is None:
-#    parser.parse_args(['-h'])
-#parsed_args.action(parsed_args)
 
 
 if __name__ == "__main__":
     print(banner)
     args,output = parse_args()
+    if not os.path.exists("listmap-data/"):
+        os.mkdir("listmap-data/")
+    port_list = args.port.split(',')
     openfile()
-    
-    if not os.path.exists("listmap-output/"):
-        os.mkdir("listmap-output/")
-
 
 
 
