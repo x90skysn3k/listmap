@@ -6,4 +6,5 @@ Listmap was made to save time when parsing through nmap output. Listmap creates 
 
 #Usage
 Command: python listmap.py -h
+
 Example: python listmap.py --file nmapoutput.gnmap --port 3389,443,80,22,21 --outfile pentest
