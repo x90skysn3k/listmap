@@ -2,6 +2,7 @@ from argparse import RawTextHelpFormatter
 import sys, time, os
 import re
 import argparse
+import argcomplete
 
 timestr = time.strftime("%Y%m%d-%H%M")
 
@@ -63,6 +64,8 @@ def parse_args():
 
     menu_group.add_argument('-o', '--outfile', help="Specify output file prefix")
 
+    argcomplete.autocomplete(parser)    
+   
     args = parser.parse_args()
 
     output = None
