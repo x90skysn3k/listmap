@@ -31,7 +31,7 @@ banner = colors.red + r"""
 + '\n Created by: Shane Young/@x90skysn3k' + '\n' + colors.normal + '\n'
 
 
-def openfile():
+def ip_by_port():
     for port in port_list:
         with open(args.file, 'r') as nmap_file:
             iplist = []
@@ -47,6 +47,23 @@ def openfile():
                 print "Written list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
 
 
+def port_by_ip():
+    for ip in ip_list:
+        with open(args.file, 'r') as nmap_file:
+            portlist = []
+            for line in nmap_file:
+                if ' '+ip+' ' in line:
+                    port = re.findall( '(\d+)\/open', line)
+                    portlist += port
+            
+        output = 'listmap-data/' + args.outfile + '-' + ip + '_' + timestr + '.txt'
+            with open(output, 'w+') as f:
+                f.write('\n'.join(portlist))
+                f.write('\n')
+                print "Written list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
+
+
+
 def parse_args():
     
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter, description=\
@@ -58,11 +75,13 @@ def parse_args():
     
     menu_group.add_argument('-f', '--file', help="Gnmap file to parse")
     
-    menu_group.add_argument('-t', '--top-ports', help="Parse out top interesting ports")
+#    menu_group.add_argument('-t', '--top-ports', help="Parse out top interesting ports")
 
-    menu_group.add_argument('-p', '--port', help="Define single port to parse out")
+    menu_group.add_argument('-p', '--port', help="Define single port to parse out", default=None)
 
     menu_group.add_argument('-o', '--outfile', help="Specify output file prefix")
+    
+    menu_group.add_argument('-i', '--iplist', help="Parse out ports by ip", default=None)
 
     argcomplete.autocomplete(parser)    
    
@@ -73,9 +92,9 @@ def parse_args():
     if not args.file:
         args.file = raw_input('Enter file gnmap file to parse:')
         print('ENTERED: {0}\n'.format(args.file))
-    if not args.port:
-        args.port = raw_input('Enter port to parse out:')
-        print('ENTERED: {0}\n'.format(args.port))
+    #if not args.port:
+    #    args.port = raw_input('Enter port to parse out:')
+    #    print('ENTERED: {0}\n'.format(args.port))
     if not args.outfile:
         args.outfile = raw_input('Enter prefix for file output:')
         print('ENTERED: {0}\n'.format(args.outfile))
@@ -88,8 +107,19 @@ if __name__ == "__main__":
     args,output = parse_args()
     if not os.path.exists("listmap-data/"):
         os.mkdir("listmap-data/")
-    port_list = args.port.split(',')
-    openfile()
+        
+    if args.port:
+        port_list = args.port.split(',')
+    
+    if args.iplist:
+        ip_list = args.iplist.split(',')
+    
+    if args.port:
+        ip_by_port()
+    elif args.iplist:
+        port_by_ip()
+
+        
 
 
 
