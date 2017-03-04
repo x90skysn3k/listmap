@@ -44,7 +44,9 @@ def ip_by_port():
             with open(output, 'w+') as f:
                 f.write('\n'.join(iplist))
                 f.write('\n')
-                print "Written list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
+                print "\nThe Port: " + colors.green + port + colors.normal + " is open on these IP's: "
+                print iplist
+                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
 
 
 def port_by_ip():
@@ -56,11 +58,13 @@ def port_by_ip():
                     port = re.findall( '(\d+)\/open', line)
                     portlist += port
             
-        output = 'listmap-data/' + args.outfile + '-' + ip + '_' + timestr + '.txt'
+            output = 'listmap-data/' + args.outfile + '-' + ip + '_' + timestr + '.txt'
             with open(output, 'w+') as f:
                 f.write('\n'.join(portlist))
                 f.write('\n')
-                print "Written list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
+                print "\nThe IP: " + colors.green + ip + colors.normal + " has these open ports: "
+                print portlist
+                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
 
 
 
