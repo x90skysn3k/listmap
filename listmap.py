@@ -85,7 +85,7 @@ def parse_args():
 
     menu_group.add_argument('-o', '--outfile', help="Specify output file prefix")
     
-    menu_group.add_argument('-i', '--iplist', help="Parse out ports by ip", default=None)
+    menu_group.add_argument('-i', '--ip', help="Parse out ports by ip", default=None)
 
     argcomplete.autocomplete(parser)    
    
@@ -115,12 +115,12 @@ if __name__ == "__main__":
     if args.port:
         port_list = args.port.split(',')
     
-    if args.iplist:
-        ip_list = args.iplist.split(',')
+    if args.ip:
+        ip_list = args.ip.split(',')
     
     if args.port:
         ip_by_port()
-    elif args.iplist:
+    elif args.ip:
         port_by_ip()
 
         
