@@ -27,7 +27,7 @@ banner = colors.red + r"""
                                          (_)    
                                                
 """+'\n' \
-+ '\n listmap.py v0.2' \
++ '\n listmap.py v1.0' \
 + '\n Created by: Shane Young/@x90skysn3k' + '\n' + colors.normal + '\n'
 
 
@@ -40,13 +40,13 @@ def ip_by_port():
                     ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
                     iplist += ip
              
-            output = 'listmap-data/' + args.outfile + '-' + port + '_' + timestr + '.txt'
+            output = 'listmap-data/' + args.prefix + '-' + port + '_' + timestr + '.txt'
             with open(output, 'w+') as f:
                 f.write('\n'.join(iplist))
                 f.write('\n')
                 print "\nThe Port: " + colors.green + port + colors.normal + " is open on these IP's: "
                 print iplist
-                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
+                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
 
 def port_by_ip():
@@ -58,13 +58,13 @@ def port_by_ip():
                     port = re.findall( '(\d+)\/open', line)
                     portlist += port
             
-            output = 'listmap-data/' + args.outfile + '-' + ip + '_' + timestr + '.txt'
+            output = 'listmap-data/' + args.prefix + '-' + ip + '_' + timestr + '.txt'
             with open(output, 'w+') as f:
                 f.write('\n'.join(portlist))
                 f.write('\n')
                 print "\nThe IP: " + colors.green + ip + colors.normal + " has these open ports: "
                 print portlist
-                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + output
+                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
 
 
@@ -77,13 +77,13 @@ def parse_args():
 
     menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
     
-    menu_group.add_argument('-f', '--file', help="Gnmap file to parse")
+    menu_group.add_argument('-f', '--file', help="Gnmap file to parse", required=True)
     
 #    menu_group.add_argument('-t', '--top-ports', help="Parse out top interesting ports")
 
     menu_group.add_argument('-p', '--port', help="Define single port to parse out", default=None)
 
-    menu_group.add_argument('-o', '--outfile', help="Specify output file prefix")
+    menu_group.add_argument('-o', '--prefix', help="Specify prefix for output file i.e. company name", required=True)
     
     menu_group.add_argument('-i', '--ip', help="Parse out ports by ip", default=None)
 
@@ -93,15 +93,15 @@ def parse_args():
 
     output = None
 
-    if not args.file:
-        args.file = raw_input('Enter file gnmap file to parse:')
-        print('ENTERED: {0}\n'.format(args.file))
+#    if not args.file:
+#        args.file = raw_input('Enter file gnmap file to parse:')
+#        print('ENTERED: {0}\n'.format(args.file))
     #if not args.port:
     #    args.port = raw_input('Enter port to parse out:')
     #    print('ENTERED: {0}\n'.format(args.port))
-    if not args.outfile:
-        args.outfile = raw_input('Enter prefix for file output:')
-        print('ENTERED: {0}\n'.format(args.outfile))
+#    if not args.outfile:
+#        args.outfile = raw_input('Enter prefix for file output:')
+#        print('ENTERED: {0}\n'.format(args.outfile))
     #output = 'listmap-data/' + args.outfile + ' ' + args.port + '_' + timestr + '.txt'
     return args,output
 
@@ -114,9 +114,10 @@ if __name__ == "__main__":
         
     if args.port:
         port_list = args.port.split(',')
-    
-    if args.ip:
+    elif args.ip:
         ip_list = args.ip.split(',')
+    else:
+        print colors.lightblue + "\nNo IP or Port Given!" + colors.normal
     
     if args.port:
         ip_by_port()
