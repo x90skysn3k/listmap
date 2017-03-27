@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from argparse import RawTextHelpFormatter
 import sys, time, os
 import re
