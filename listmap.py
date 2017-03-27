@@ -67,7 +67,7 @@ def port_by_ip():
                 print portlist
                 print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
-
+#CSV code thanks to @ac3lives!
 def do_csv():
     output = 'listmap-data/' + args.csv + '-' + timestr + '.csv' 
     outputfile = csv.writer(open(output, 'w+'), delimiter='\t')
