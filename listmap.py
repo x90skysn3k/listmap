@@ -28,7 +28,7 @@ banner = colors.red + r"""
                                          (_)    
                                                
 """+'\n' \
-+ '\n listmap.py v1.0' \
++ '\n listmap.py v1.1' \
 + '\n Created by: Shane Young/@x90skysn3k' + '\n' + colors.normal + '\n'
 
 

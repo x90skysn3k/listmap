@@ -10,3 +10,5 @@ Command: python listmap.py -h
 Example: python listmap.py --file nmapoutput.gnmap --port 3390,443,80,22,21 --prefix pentest
 
 Example: python listmap.py --file nmapoutput.gnmap --ip 172.1.2.3,172.2.3.4 --prefix pentest
+
+Example: python listmap.py --file nmapoutput.gnamp --csv pentest
