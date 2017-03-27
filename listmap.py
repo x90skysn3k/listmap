@@ -3,6 +3,7 @@ import sys, time, os
 import re
 import argparse
 import argcomplete
+import csv
 
 timestr = time.strftime("%Y%m%d-%H%M")
 
@@ -67,6 +68,23 @@ def port_by_ip():
                 print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
 
+def do_csv():
+    output = 'listmap-data/' + args.csv + '-' + timestr + '.csv' 
+    outputfile = csv.writer(open(output, 'w+'), delimiter='\t')
+    with open(args.file, 'r') as nmap_file:
+        for line in nmap_file:
+            ip = None
+            try:
+                ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)[0]
+            except: 
+                pass 
+            openports = re.findall( '(\d+)\/open', line)
+            ports = ', '.join(map(str, openports)) 
+            if ip and ports:
+                outputlist = [ip, ports]
+                outputfile.writerow(outputlist)
+                
+    print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal                
 
 def parse_args():
     
@@ -83,9 +101,11 @@ def parse_args():
 
     menu_group.add_argument('-p', '--port', help="Define single port to parse out", default=None)
 
-    menu_group.add_argument('-o', '--prefix', help="Specify prefix for output file i.e. company name", required=True)
+    menu_group.add_argument('-o', '--prefix', help="Specify prefix for output file i.e. company name", default="listmap")
     
     menu_group.add_argument('-i', '--ip', help="Parse out ports by ip", default=None)
+
+    menu_group.add_argument('-c', '--csv', help="output ip and port to csv", default=None)
 
     argcomplete.autocomplete(parser)    
    
@@ -93,16 +113,6 @@ def parse_args():
 
     output = None
 
-#    if not args.file:
-#        args.file = raw_input('Enter file gnmap file to parse:')
-#        print('ENTERED: {0}\n'.format(args.file))
-    #if not args.port:
-    #    args.port = raw_input('Enter port to parse out:')
-    #    print('ENTERED: {0}\n'.format(args.port))
-#    if not args.outfile:
-#        args.outfile = raw_input('Enter prefix for file output:')
-#        print('ENTERED: {0}\n'.format(args.outfile))
-    #output = 'listmap-data/' + args.outfile + ' ' + args.port + '_' + timestr + '.txt'
     return args,output
 
 
@@ -116,14 +126,15 @@ if __name__ == "__main__":
         port_list = args.port.split(',')
     elif args.ip:
         ip_list = args.ip.split(',')
-    else:
+    elif not args.csv:
         print colors.lightblue + "\nNo IP or Port Given!" + colors.normal
-    
+   
     if args.port:
         ip_by_port()
     elif args.ip:
         port_by_ip()
-
+    elif args.csv:
+        do_csv() 
         
 
 
