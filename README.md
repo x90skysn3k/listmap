@@ -8,7 +8,10 @@ Listmap was made to save time when parsing through nmap output. Listmap creates 
 Command: python listmap.py -h
 
 Example: python listmap.py --file nmapoutput.gnmap --port 3390,443,80,22,21 --prefix pentest
+	* Generate a list of all hosts (by IP address) with open ports 3390,443,80,22,21 in NMap output file nmapoutput.gnamp. Prefix the output file name with 'pentest'
 
 Example: python listmap.py --file nmapoutput.gnmap --ip 172.1.2.3,172.2.3.4 --prefix pentest
+	* Generate a list of all open ports for the IP addresses 172.1.2.3 and 172.2.3.4, prefix the output file name with 'pentest'
 
 Example: python listmap.py --file nmapoutput.gnamp --csv pentest
+	* Generate a two-column CSV file in the format of IP Address | Open Ports from the NMap output file nmapoutput.gnmap, prefix the output file name with 'pentest'
