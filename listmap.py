@@ -29,7 +29,8 @@ banner = colors.red + r"""
                                                
 """+'\n' \
 + '\n listmap.py v1.1' \
-+ '\n Created by: Shane Young/@x90skysn3k' + '\n' + colors.normal + '\n'
++ '\n Created by: Shane Young/@x90skysn3k' \
++ '\n Contributors: Aaron Herndon/@ac3lives, Gabriel Cornyn/@caesarcipher' + colors.normal + '\n'
 
 
 def ip_by_port():
@@ -41,7 +42,7 @@ def ip_by_port():
                     ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
                     iplist += ip
              
-            output = 'listmap-data/' + args.prefix + '-' + port + '_' + timestr + '.txt'
+            output = output_name(str('-' + port), '.txt')
             with open(output, 'w+') as f:
                 f.write('\n'.join(iplist))
                 f.write('\n')
@@ -49,6 +50,12 @@ def ip_by_port():
                 print iplist
                 print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
+def output_name(additional, ftype):
+    if args.datetime:
+        filename = args.directory + "/" + args.prefix + additional + '_' + timestr + ftype
+    else:
+        filename = args.directory + "/" + args.prefix + additional + ftype
+    return filename
 
 def port_by_ip():
     for ip in ip_list:
@@ -59,7 +66,7 @@ def port_by_ip():
                     port = re.findall( '(\d+)\/open', line)
                     portlist += port
             
-            output = 'listmap-data/' + args.prefix + '-' + ip + '_' + timestr + '.txt'
+            output = output_name('-' + ip, '.txt')
             with open(output, 'w+') as f:
                 f.write('\n'.join(portlist))
                 f.write('\n')
@@ -67,10 +74,28 @@ def port_by_ip():
                 print portlist
                 print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
+#Generate URLs brought to you by @ac3lives
+def generate_urls():
+    output = output_name("", ".txt")
+    outputfile = open(output, 'w+')
+    with open(args.file, 'r') as nmap_file:
+        for line in nmap_file:
+            ip = None
+            try:
+                ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)[0]
+            except: 
+                pass
+            openhttps = re.findall('(\d+)\/open/tcp//https///',line)
+            openhttp = re.findall('(\d+)\/open/tcp//http///',line)
+            for port in openhttps:
+                outputfile.write("https://"+ip+":"+port+"\n")
+            for port in openhttp:
+                outputfile.write("http://"+ip+":"+port+"\n")
+
 #CSV code thanks to @ac3lives!
 def do_csv():
-    output = 'listmap-data/' + args.csv + '-' + timestr + '.csv' 
-    outputfile = csv.writer(open(output, 'w+'), delimiter='\t')
+    output = output_name("", ".csv") 
+    outputfile = csv.writer(open(output, 'w+'), delimiter=',')
     with open(args.file, 'r') as nmap_file:
         for line in nmap_file:
             ip = None
@@ -79,7 +104,7 @@ def do_csv():
             except: 
                 pass 
             openports = re.findall( '(\d+)\/open', line)
-            ports = ', '.join(map(str, openports)) 
+            ports = '; '.join(map(str, openports)) 
             if ip and ports:
                 outputlist = [ip, ports]
                 outputfile.writerow(outputlist)
@@ -105,7 +130,13 @@ def parse_args():
     
     menu_group.add_argument('-i', '--ip', help="Parse out ports by ip", default=None)
 
-    menu_group.add_argument('-c', '--csv', help="output ip and port to csv", default=None)
+    menu_group.add_argument('-c', '--csv', help="output ip and port to csv", action="store_true", default=False)
+
+    menu_group.add_argument('--no-datetime', help="Do not place date and time stamps at the end of output file names", action="store_false", dest="datetime", default=True)
+
+    menu_group.add_argument('-d', '--directory', help="Specify an output directory, default is listmap-data", default="listmap-data")
+
+    menu_group.add_argument('-u', '--urls', help="Generate a list of URLs from http/https output in file. Format: http(s)://<ip>:<port>", default=False, action="store_true")  
 
     argcomplete.autocomplete(parser)    
    
@@ -119,14 +150,14 @@ def parse_args():
 if __name__ == "__main__":
     print(banner)
     args,output = parse_args()
-    if not os.path.exists("listmap-data/"):
-        os.mkdir("listmap-data/")
+    if not os.path.exists(args.directory):
+        os.mkdir(args.directory)
         
     if args.port:
         port_list = args.port.split(',')
     elif args.ip:
         ip_list = args.ip.split(',')
-    elif not args.csv:
+    elif not args.csv or args.urls:
         print colors.lightblue + "\nNo IP or Port Given!" + colors.normal
    
     if args.port:
@@ -135,6 +166,8 @@ if __name__ == "__main__":
         port_by_ip()
     elif args.csv:
         do_csv() 
+    elif args.urls:
+        generate_urls()
         
 
 
