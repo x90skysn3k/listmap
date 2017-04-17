@@ -74,6 +74,24 @@ def port_by_ip():
                 print portlist
                 print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
 
+#Generate URLs brought to you by @ac3lives
+def generate_urls():
+    output = output_name("", ".txt")
+    outputfile = open(output, 'w+')
+    with open(args.file, 'r') as nmap_file:
+        for line in nmap_file:
+            ip = None
+            try:
+                ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)[0]
+            except: 
+                pass
+            openhttps = re.findall('(\d+)\/open/tcp//https///',line)
+            openhttp = re.findall('(\d+)\/open/tcp//http///',line)
+            for port in openhttps:
+                outputfile.write("https://"+ip+":"+port+"\n")
+            for port in openhttp:
+                outputfile.write("http://"+ip+":"+port+"\n")
+
 #CSV code thanks to @ac3lives!
 def do_csv():
     output = output_name("", ".csv") 
@@ -114,9 +132,11 @@ def parse_args():
 
     menu_group.add_argument('-c', '--csv', help="output ip and port to csv", action="store_true", default=False)
 
-    menu_group.add_argument('--no-datetime', help="Do not place date and time stamps at the end of output file names", action="store_true", dest="datetime", default=False)
+    menu_group.add_argument('--no-datetime', help="Do not place date and time stamps at the end of output file names", action="store_false", dest="datetime", default=True)
 
-    menu_group.add_argument('-d', '--directory', help="Specify an output directory, default is listmap-data", default="listmap-data")    
+    menu_group.add_argument('-d', '--directory', help="Specify an output directory, default is listmap-data", default="listmap-data")
+
+    menu_group.add_argument('-u', '--urls', help="Generate a list of URLs from http/https output in file. Format: http(s)://<ip>:<port>", default=False, action="store_true")  
 
     argcomplete.autocomplete(parser)    
    
@@ -137,7 +157,7 @@ if __name__ == "__main__":
         port_list = args.port.split(',')
     elif args.ip:
         ip_list = args.ip.split(',')
-    elif not args.csv:
+    elif not args.csv or args.urls:
         print colors.lightblue + "\nNo IP or Port Given!" + colors.normal
    
     if args.port:
@@ -146,6 +166,8 @@ if __name__ == "__main__":
         port_by_ip()
     elif args.csv:
         do_csv() 
+    elif args.urls:
+        generate_urls()
         
 
 
