@@ -28,7 +28,8 @@ banner = colors.red + r"""
                                          (_)    
                                                
 """+'\n' \
-+ '\n listmap.py v1.1' \
++ '\n listmap.py v1.2' \
++ '\n Updated for Pytyhon3 by: Brent White/@brentwdesign' \
 + '\n Created by: Shane Young/@x90skysn3k' \
 + '\n Contributors: Aaron Herndon/@ac3lives, Gabriel Cornyn/@caesarcipher' + colors.normal + '\n'
 
@@ -46,9 +47,9 @@ def ip_by_port():
             with open(output, 'w+') as f:
                 f.write('\n'.join(iplist))
                 f.write('\n')
-                print "\nThe Port: " + colors.green + port + colors.normal + " is open on these IP's: "
-                print iplist
-                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
+                print("\nThe Port: " + colors.green + port + colors.normal + " is open on these IP's: ")
+                print(iplist)
+                print("\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal)
 
 def output_name(additional, ftype):
     if args.datetime:
@@ -70,9 +71,9 @@ def port_by_ip():
             with open(output, 'w+') as f:
                 f.write('\n'.join(portlist))
                 f.write('\n')
-                print "\nThe IP: " + colors.green + ip + colors.normal + " has these open ports: "
-                print portlist
-                print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal
+                print("\nThe IP: " + colors.green + ip + colors.normal + " has these open ports: ")
+                print(portlist)
+                print("\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal)
 
 #Generate URLs brought to you by @ac3lives
 def generate_urls():
@@ -109,7 +110,7 @@ def do_csv():
                 outputlist = [ip, ports]
                 outputfile.writerow(outputlist)
                 
-    print "\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal                
+    print("\nWritten list to: " + "[" + colors.green + "+" + colors.normal + "] " + colors.green + output + colors.normal)                
 
 def parse_args():
     
@@ -158,7 +159,7 @@ if __name__ == "__main__":
     elif args.ip:
         ip_list = args.ip.split(',')
     elif not args.csv or args.urls:
-        print colors.lightblue + "\nNo IP or Port Given!" + colors.normal
+        print(colors.lightblue + "\nNo IP or Port Given!" + colors.normal)
    
     if args.port:
         ip_by_port()
@@ -169,7 +170,3 @@ if __name__ == "__main__":
     elif args.urls:
         generate_urls()
         
-
-
-
-
